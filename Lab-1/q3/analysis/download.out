@@ -1,0 +1,3852 @@
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------
+----------------start------------
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<head> 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166975625-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166975625-1');
+</script>
+
+    <title>StoryShaala</title> 
+    <link rel="stylesheet" href="/css/navigation_bar.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <meta property="og:site_name" content="StoryShaala">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Improvise the stories by adding one line to it.">
+
+</head>
+
+<body>
+    <!-- navigation bar -->
+
+    
+    <div id="navbar-wrapper">
+    <div class="navbar" id = "navbar">
+        <div><a style="text-decoration: none;" href="/" title="Home"><h3>StoryShaala</h3></a></div>
+        <div id="flex-m">
+            <div class="flex-container-header">
+                <a class="flex-container-header-a" href="/"><div id="home">Home</div></a>
+                <a class="flex-container-header-a" href="/game"><div id="War">Story War</div></a>
+                <!-- <a href=""><div id="about">About</div></a> -->
+                <a class="flex-container-header-a" href="/about"><div id="contact">About</div></a>
+                <!-- <a href="/register"><div id="signup">SignUp</div></a> -->
+                <a class="flex-container-header-a" href="/login"><div id="login">Login</div></a>
+            </div>
+        </div>
+        
+    </div>
+</div>    
+    <!-- main content -->
+    <div class="container" id="container" >
+        <h1>Stories</h1>
+        <h5>Improvise the stories by adding one line to it.</h5>
+        
+            <h6><span><a href="/login">Login</a></span> to start a new story.</h6>
+        
+    
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="width: 100%;">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create new story</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+                <div id="coinMessage" >Cost : 5 coins</div><br>
+                <form action="/story/newstory" id="formEditLine" onsubmit="return checkLine()" method="POST">
+                    <div >
+                        Category : <select name="category">
+                            <option value="short">Short (100 lines)</option>
+                            <option value="long">Long (1000 lines)</option>
+                            <option value="inf">Infinite (Never End)</option>
+            
+                        </select><br><br>
+                        <div class="input-group mb-3">
+                            <!-- <div class="input-group-prepend">
+                                <span>First Line :&nbsp;&nbsp;</span>
+                            </div> -->
+                            <input id="editline" type="text" class="form-control" autocomplete="off" placeholder="write your new story line here" name="firstline" minlength="5">
+                        </div>
+                        <!-- First line : <input type="text" name="firstline" minlength="10" class="form-control"><br> -->
+                        <div class="guidelines">
+                            <ul>Please follow below guidelines:
+                                <li>Start your sentence with capital letter and end with either ' . ' or ' ! ' or ' ? '.</li>
+                                <li>It should be single line sentence.   </li>
+                            </ul>
+                        </div>
+                        <!-- <input type="submit" value="Create" class="btn btn-primary"><span id="coinData"></span> -->
+                    </div>
+                    <div class="modal-footer">
+                        <span id="coinData"></span>
+                        <button type="submit" class="btn btn-success">Create</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+        
+        <div id = overlayStory>
+            
+                <div id = "overlay-panelStory">
+                    
+                </div>
+        </div>
+        
+        <!-- <button class="loadmoreBtn">Load More</button>d More</button> -->
+        <!-- <form action="/" method="GET">
+            <button onclick="new()">b</button>
+        </form> -->
+        
+        
+        <!-- <div class="story-post">
+            <h2 class="title">Unce upon a time.</h2>
+            <p class="text">There was a king who live in jungle</p>
+        </div> -->
+        
+        
+    </div>
+    <div class="loading">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
+    <script>
+        var count = 1;
+        var fetching = 0, loaded = 1;
+        var postToLoad = 10;
+        const loading = document.querySelector('.loading');
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            // console.log( { scrollTop, scrollHeight, clientHeight });
+
+            // console.log(document.documentElement.clientHeight);
+            if ((clientHeight + scrollTop >= scrollHeight - 200)) {
+                // show the loading animation
+                // console.log("loaded");
+
+                if (loaded == postToLoad + 1) {
+                    fetching = 0;
+                    loaded = 0;
+                }
+                if (fetching == 0) {
+                    // console.log(".........",loaded);
+                    loaded++;
+                    fetching = 1;
+                    showLoading(1000);
+                }
+            }
+            else {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showLoading(time) {
+            loading.classList.add('show');
+
+            // load more data
+            setTimeout(() => {
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                // getPost('some',count++,1)
+                for (let i = 0; i < postToLoad; i++) {
+                    getPost('some', count++, 1)
+                }
+            }, time);
+        }
+        const container = document.getElementById('container');
+        async function newstory() {
+            var url = '/profile/getcoinsdeitail';
+            var jsonData = await fetch(url);
+            const coins = await jsonData.json();
+            // console.log(coins.coins);
+
+            // var postCoin = document.createAttribute('div');
+            // postCoin.innerHTML = 'Coins: ';
+            document.getElementById('coinData').innerHTML = 'Coins left: ' + coins.coins;
+            if(coins.coins<5){
+                document.getElementById('coinMessage').innerHTML='<span class="badge badge-danger">Not enough coins! Minimum 5 coins required.</span><br><span class="badge badge-success">Improvise other stories to gain coins.</span>'
+            }
+            // document.getElementById("overlay").style.display = "block";
+
+        }
+        function checkLine() {
+            document.getElementById("editline").value = document.getElementById("editline").value.trim();
+            var pattern = new RegExp("^[A-Z][A-Za-z0-9,\'\"\\s?!]+[.!?]$");
+            if (!pattern.test(document.getElementById("editline").value)) {
+                alert("Please follow guideline !");
+            }
+
+            return (pattern.test(document.getElementById("editline").value))
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById('overlayStory').style.display = "none";
+        }
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        // getPost('some',count++,1)
+        showLoading(0)
+        async function getPost(cat, start, count) {
+            // console.log("in getpost()");
+            var tempcount = count;
+            var url = "/story/getstories/?category=" + cat + "&start=" + start + "&count=" + tempcount;
+            const story = await fetch(url);
+
+
+            const data = await story.json();
+            // console.log(data);
+            addstoryToDOM(data)
+            loaded++;
+        }
+        function addstoryToDOM(data, tempcount) {
+
+            if (data.length != 0) {
+
+                if (!data[0].code) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('story-post');
+                    var story = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < 5) {
+                            story += data[i].body
+                        }
+                    }
+                    // console.log(data[0].user);
+                    // console.log(story);
+                    let type = '';
+                    if (data[0].category == "short") {
+                        type = 'Short'
+                        storyTypeStyle = 'badge-info'
+                    } else if (data[0].category == "long") {
+                        type = 'Long'
+                        storyTypeStyle = "badge-success"
+                    }
+                    else {
+                        type = 'Never End';
+                        storyTypeStyle = "badge-warning"
+                    }
+                    let storyType = '<span class="badge ' + storyTypeStyle + '">' + type + '</span>';
+
+                    postElement.innerHTML = '<div ><h1 style="display:inline">' + data[0].body + '</h1>' + storyType + '</div>' +
+                        '<p class="text">' + story + ' </p>' +
+                        '<a href="/story/readstory/?id=' + data[0].storyId + '" target="_blank">Read more..</a>'
+
+                    container.appendChild(postElement);
+
+                    loading.classList.remove('show');
+                }
+
+            }
+            else {
+                count--;
+            }
+            console.log(count);
+
+
+        }
+    </script>
+    
+</body> 
+</html> 
+---------------end-----------

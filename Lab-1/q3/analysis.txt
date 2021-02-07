@@ -1,0 +1,4 @@
+The result shows that in morning it take more time and other time of day.
+Average time = 1.767s
+max time = 3.161s
+min time = 1.412s
