@@ -14,8 +14,8 @@ This command will call init_module() which is called when the module is inserted
 ```
 krishna@krishna:~/char$ cat /proc/devices | grep simple_driver
 ```
-This command will display that our new driver is installed./
-![Screenshot](driverlist.JPG)/
+This command will display that our new driver is installed.\
+![Screenshot](driverlist.JPG)\
 ```
 krishna@krishna:~/char$ ./simple_char_test 
 ```
