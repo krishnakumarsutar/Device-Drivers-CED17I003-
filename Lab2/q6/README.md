@@ -25,9 +25,9 @@ krishna@krishna:~/char$ sudo rmmod simple_char_driver.ko
 ```
 This command will call cleanup_module() which is called just before the module is unloaded from the kernel.
 # Ouput
-![Screenshot](testdrive.JPG)
-This is the screenshot of the driver running.
-![Screenshot](insmod.JPG)
-This is kernel log when module is loaded printing the message.
-![Screenshot](rmmod.JPG)
-This is kernel log when module is unloaded printing the message.
+![Screenshot](testdrive.JPG)\
+This is the screenshot of the driver running.\
+![Screenshot](insmod.JPG)\
+This is kernel log when module is loaded printing the message.\
+![Screenshot](rmmod.JPG)\
+This is kernel log when module is unloaded printing the message.\
