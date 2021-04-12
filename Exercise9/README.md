@@ -24,6 +24,10 @@ This command will call init_module() which is called when the module is inserted
 krishna@krishna:~/Module$ sudo rmmod keylogger.ko
 ```
 This command will call cleanup_module() which is called just before the module is unloaded from the kernel.
+```
+krishna@krishna:~/Module$ dmesg
+```
+This command will print the system log.
 # Ouput
 ![Screenshot](output.JPG)
 This is kernel log when module is loaded printing the message.
