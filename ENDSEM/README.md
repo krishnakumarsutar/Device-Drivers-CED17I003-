@@ -40,7 +40,7 @@ krishna@krishna:~/Desktop/DD/ENDSEM/b$ sudo insmod name.ko
 ```
 This command will call init_module() which is called when the module is inserted into the kernel or loaded to the kernel.
 ```
-krishna@krishna:~/Desktop/DD/ENDSEM/b$ sudo rmmod hello.ko
+krishna@krishna:~/Desktop/DD/ENDSEM/b$ sudo rmmod name.ko
 ```
 This command will call cleanup_module() which is called just before the module is unloaded from the kernel.
 # Ouput
